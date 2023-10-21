@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Calculator</title>
+</head>
+
+<body>
+    <h1>Attendance Calculator</h1>
+    <p>Enter classes attended and classes delivered to find the number of classes you need to attend to make up 75% </p>
+
+    <label for="numerator">Classes Attended:</label>
+    <input type="number" id="numerator">
+
+    <label for="denominator">Classes Delivered:</label>
+    <input type="number" id="denominator">
+
+    <button onclick="calculate()">Calculate</button>
+
+    <h2></h2>
+    <h1 id="result"></h1>
+
+    <script>
+        function calculate() {
+            var numerator = parseInt(document.getElementById("numerator").value);
+            var denominator = parseInt(document.getElementById("denominator").value);
+
+            var targetFraction = 0.75;
+            var x = (targetFraction * denominator - numerator) / (1 - targetFraction);
+
+            document.getElementById("result").textContent = `You need to attend ${x} more classes.`;
+        }
+    </script>
+</body>
+
+</html>
