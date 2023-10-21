@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Calculator</title>
+    <title>Attendance Calculator By FrozenBrick</title>
 </head>
 
 <body>
@@ -30,7 +30,17 @@
             var targetFraction = 0.75;
             var x = (targetFraction * denominator - numerator) / (1 - targetFraction);
 
-            document.getElementById("result").textContent = `You need to attend ${x} more classes.`;
+            if (x >= 1) {
+                document.getElementById("result").textContent = `You need to attend ${x} more classes.`;
+
+                
+            } else {
+                document.getElementById("result").textContent = `You can bunk ${Math.abs(x)} classes.`;
+
+                
+            }
+
+//            document.getElementById("result").textContent = `You need to attend ${Math.abs(x)} more classes.`;//
         }
     </script>
 </body>
