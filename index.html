@@ -5,63 +5,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance Calculator</title>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115751576-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-115751576-1');
-</script>
-
 </head>
 
 <body>
     <h1>Attendance Calculator</h1>
-    <p>find the number of classes you need to attend to make up 75% or how many you can bunk if its above 75%</p>
+    <p>Find the number of classes you need to attend to make up 65% or 75%, or how many you can bunk if it's above 65% or 75%.</p>
 
     <label for="numerator">Classes Attended:</label>
-    <input type="number" id="numerator" placeholder="Example: 18">
-<br><br>
+    <input type="number" id="numerator">
+    <br><br>
     <label for="denominator">Classes Delivered:</label>
-    <input type="number" id="denominator" placeholder="Example: 20">
-<br><br>
+    <input type="number" id="denominator">
+    <br><br>
+    <button onclick="setTargetFraction(0.65)">65%</button>
+    <button onclick="setTargetFraction(0.75)">75%</button>
+    <br><br>
     <button onclick="calculate()">Calculate</button>
+ 
     <br><br>
     <h2></h2>
     <h1 id="result"></h1>
 
     <script>
+        var targetFraction = 0.75; // Default target fraction
+
+        function setTargetFraction(fraction) {
+            targetFraction = fraction;
+        }
+
         function calculate() {
             var numerator = parseInt(document.getElementById("numerator").value);
             var denominator = parseInt(document.getElementById("denominator").value);
 
-            var targetFraction = 0.75;
             var x = (targetFraction * denominator - numerator) / (1 - targetFraction);
 
             if (x >= 1) {
-                document.getElementById("result").textContent = `You need to attend ${x} more classes.`;
-
-                
+                document.getElementById("result").textContent = `You need to attend ${Math.round(x)} more classes.`;
             } else {
-                document.getElementById("result").textContent = `You can bunk ${Math.abs(x)} classes.`;
-
-                
+                document.getElementById("result").textContent = `You can bunk ${Math.round(Math.abs(x))} classes.`;
             }
-
-//            document.getElementById("result").textContent = `You need to attend ${Math.abs(x)} more classes.`; 
-        };
-
-
+        }
     </script>
-<br>
-
-
-<br><br><br><br><br>
+    <br><br><br><br><br>
+    <footer>
+        <p>For any issues find Bilawal </p>
+    </footer>
 </body>
-<footer>    
-    <p>For any issues find Bilawal </p>
-</footer>
 
 </html>
