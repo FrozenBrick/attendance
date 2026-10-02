@@ -1,55 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Calculator</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: light-dark(#ffffff, #111111);
+      --text: light-dark(#111111, #ffffff);
+      --border: light-dark(#cccccc, #444444);
+      --button: light-dark(#f2f2f2, #222222);
+      --active: #4caf50;
+      --active-text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    #app {
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 32px 20px;
+      border-radius: 0;
+    }
+
+    main {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      font-size: 28px;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .targets {
+      display: flex;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--button);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    button.active {
+      background: var(--active);
+      border-color: var(--active);
+      color: var(--active-text);
+    }
+
+    #calculate {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    #result {
+      min-height: 56px;
+      margin-top: 24px;
+      font-size: 19px;
+      line-height: 1.4;
+    }
+
+    footer {
+      margin-top: 48px;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+  </style>
 </head>
-
 <body>
-    <h1>Attendance Calculator</h1>
-    <p>Find the number of classes you need to attend to make up 65% or 75%, or how many you can bunk if it's above 65% or 75%.</p>
+  <div id="app">
+    <main>
+      <h1>Attendance Calculator</h1>
 
-    <label for="numerator">Classes Attended:</label>
-    <input type="number" id="numerator">
-    <br><br>
-    <label for="denominator">Classes Delivered:</label>
-    <input type="number" id="denominator">
-    <br><br>
-    <button onclick="setTargetFraction(0.90)">90%</button>
-    <button onclick="setTargetFraction(0.75)">75%</button>
-    <br><br>
-    <button onclick="calculate()">Calculate</button>
- 
-    <br><br>
-    <h2></h2>
-    <h1 id="result"></h1>
+      <label for="attended">Classes attended</label>
+      <input id="attended" type="number" min="0" step="1" placeholder="e.g. 10">
 
-    <script>
-        var targetFraction = 0.75; // Default target fraction
+      <label for="delivered">Classes delivered</label>
+      <input id="delivered" type="number" min="1" step="1" placeholder="e.g. 10">
 
-        function setTargetFraction(fraction) {
-            targetFraction = fraction;
+      <div class="targets" aria-label="Attendance target">
+        <button type="button" id="btn90">90%</button>
+        <button type="button" id="btn75" class="active">75%</button>
+      </div>
+
+      <button type="button" id="calculate">Calculate</button>
+
+      <div id="result" aria-live="polite"></div>
+
+      <footer>For any issues find Bilawal</footer>
+    </main>
+  </div>
+
+  <script>
+    let target = 0.75;
+
+    const attendedInput = document.getElementById('attended');
+    const deliveredInput = document.getElementById('delivered');
+    const btn90 = document.getElementById('btn90');
+    const btn75 = document.getElementById('btn75');
+    const calculateButton = document.getElementById('calculate');
+    const result = document.getElementById('result');
+
+    btn90.addEventListener('click', () => {
+      target = 0.90;
+      btn90.classList.add('active');
+      btn75.classList.remove('active');
+    });
+
+    btn75.addEventListener('click', () => {
+      target = 0.75;
+      btn75.classList.add('active');
+      btn90.classList.remove('active');
+    });
+
+    function calculate() {
+      const attended = Number(attendedInput.value);
+      const delivered = Number(deliveredInput.value);
+
+      if (
+        !Number.isInteger(attended) ||
+        !Number.isInteger(delivered) ||
+        attended < 0 ||
+        delivered <= 0 ||
+        attended > delivered
+      ) {
+        result.textContent = 'Please enter valid numbers.';
+        return;
+      }
+
+      const current = attended / delivered;
+      const percent = Math.round(target * 100);
+
+      if (current >= target) {
+        const maxBunk = Math.floor((attended - target * delivered) / target + 1e-9);
+
+        if (maxBunk > 0) {
+          result.textContent = `You can bunk ${maxBunk} class${maxBunk === 1 ? '' : 'es'} and stay at ${percent}% or above.`;
+        } else {
+          result.textContent = `You're at ${percent}% and can't bunk any classes.`;
         }
+      } else {
+        const needed = Math.ceil((target * delivered - attended) / (1 - target) - 1e-9);
+        result.textContent = `You need to attend ${needed} more class${needed === 1 ? '' : 'es'} to reach ${percent}%.`;
+      }
+    }
 
-        function calculate() {
-            var numerator = parseInt(document.getElementById("numerator").value);
-            var denominator = parseInt(document.getElementById("denominator").value);
+    calculateButton.addEventListener('click', calculate);
 
-            var x = (targetFraction * denominator - numerator) / (1 - targetFraction);
-
-            if (x >= 1) {
-                document.getElementById("result").textContent = `You need to attend ${Math.round(x)} more classes.`;
-            } else {
-                document.getElementById("result").textContent = `You can bunk ${Math.round(Math.abs(x))} classes.`;
-            }
-        }
-    </script>
-    <br><br><br><br><br>
-    <footer>
-        <p>For any issues find Bilawal </p>
-    </footer>
+    [attendedInput, deliveredInput].forEach(input => {
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') calculate();
+      });
+    });
+  </script>
 </body>
-
 </html>
